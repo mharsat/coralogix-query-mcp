@@ -33,22 +33,24 @@ export interface LogsSchemaOutput {
 export const logsSchemaToolSchema: Tool = {
   name: "get_logs_schema",
   description:
-    "Get comprehensive schema information for Coralogix logs including available fields, search examples, and query syntax tips to help construct effective log queries.",
+    "Retrieve comprehensive schema documentation for Coralogix log fields and query syntax. Use this tool BEFORE querying logs to understand available fields, see query examples, and learn syntax. Essential for constructing effective log queries and understanding log structure.",
   inputSchema: {
     type: "object",
     properties: {
       includeExamples: {
         type: "boolean",
         default: true,
-        description: "Include practical query examples for common use cases",
+        description:
+          "Include practical query examples for common logging scenarios (errors, traces, performance). Recommended for learning query patterns and troubleshooting workflows.",
       },
       includeAdvanced: {
         type: "boolean",
         default: false,
         description:
-          "Include advanced DataPrime operators and complex examples",
+          "Include advanced DataPrime operators (joins, complex aggregations, parsing). Enable when building sophisticated analytics queries or custom log processing workflows.",
       },
     },
+    additionalProperties: false,
   },
 };
 
