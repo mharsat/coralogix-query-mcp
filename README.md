@@ -38,10 +38,10 @@ The server requires two environment variables:
 
 ### Environment Setup
 
-Copy the example environment file:
+For local development, copy the example environment file:
 
 ```bash
-cp example.env .env
+cp .env.example .env
 ```
 
 Then edit `.env` with your actual values:
@@ -50,6 +50,8 @@ Then edit `.env` with your actual values:
 CORALOGIX_API_KEY=your_actual_api_key
 CORALOGIX_DOMAIN=EU1
 ```
+
+**Note**: The server will automatically load environment variables from `.env` file if present. You can also set environment variables directly in your shell or MCP client configuration.
 
 ## Usage with MCP Clients
 
@@ -212,6 +214,10 @@ The tools work together to provide a comprehensive log analysis experience:
 git clone https://github.com/mharsat/coralogix-query-mcp.git
 cd coralogix-query-mcp
 npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your actual Coralogix API key and domain
 ```
 
 ### Build
