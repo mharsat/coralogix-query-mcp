@@ -1,11 +1,11 @@
 {
-  "name": "coralogix-mcp-server",
+  "name": "coralogix-query-mcp",
   "version": "0.1.0",
   "description": "MCP server for Coralogix log querying with AI-optimized responses",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "coralogix-mcp-server": "dist/index.js"
+    "coralogix-query-mcp": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -28,7 +28,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mharsat/coralogix-mcp-server.git"
+    "url": "https://github.com/mharsat/coralogix-query-mcp.git"
   },
   "engines": {
     "node": ">=18.0.0"

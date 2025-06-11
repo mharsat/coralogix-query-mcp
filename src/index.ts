@@ -19,7 +19,7 @@ class CoralogixMCPServer {
   constructor() {
     this.server = new Server(
       {
-        name: "coralogix-mcp-server",
+        name: "coralogix-query-mcp",
         version: "0.1.0",
       },
       {
@@ -122,7 +122,7 @@ class CoralogixMCPServer {
       const transport = new StdioServerTransport();
       await this.server.connect(transport);
 
-      console.error("Coralogix MCP Server running on stdio");
+      console.error("Coralogix Query MCP Server running on stdio");
     } catch (error) {
       console.error("Failed to start server:", error);
       process.exit(1);

@@ -1,4 +1,4 @@
-# Coralogix MCP Server
+# Coralogix Query MCP
 
 A Model Context Protocol (MCP) server that provides AI-optimized access to Coralogix log querying capabilities. Designed to work seamlessly with AI agents while handling large log responses efficiently.
 
@@ -14,13 +14,13 @@ A Model Context Protocol (MCP) server that provides AI-optimized access to Coral
 ## Installation
 
 ```bash
-npm install -g coralogix-mcp-server
+npm install -g coralogix-query-mcp
 ```
 
 Or run directly with npx:
 
 ```bash
-npx coralogix-mcp-server
+npx coralogix-query-mcp
 ```
 
 ## Configuration
@@ -61,7 +61,7 @@ Add to your MCP settings in Cursor:
   "mcpServers": {
     "coralogix": {
       "command": "npx",
-      "args": ["coralogix-mcp-server"],
+      "args": ["coralogix-query-mcp"],
       "env": {
         "CORALOGIX_API_KEY": "your_api_key",
         "CORALOGIX_DOMAIN": "EU1"
@@ -76,7 +76,7 @@ Add to your MCP settings in Cursor:
 Configure your MCP client to run:
 
 ```bash
-CORALOGIX_API_KEY=your_key CORALOGIX_DOMAIN=EU1 npx coralogix-mcp-server
+CORALOGIX_API_KEY=your_key CORALOGIX_DOMAIN=EU1 npx coralogix-query-mcp
 ```
 
 ## Available Tools
@@ -178,8 +178,8 @@ The server returns structured, AI-optimized responses:
 ### Setup
 
 ```bash
-git clone https://github.com/mharsat/coralogix-mcp-server.git
-cd coralogix-mcp-server
+git clone https://github.com/mharsat/coralogix-query-mcp.git
+cd coralogix-query-mcp
 npm install
 ```
 
@@ -225,5 +225,5 @@ MIT
 
 For issues and questions:
 
-- GitHub Issues: https://github.com/mharsat/coralogix-mcp-server/issues
+- GitHub Issues: https://github.com/mharsat/coralogix-query-mcp/issues
 - Coralogix Documentation: https://coralogix.com/docs/
