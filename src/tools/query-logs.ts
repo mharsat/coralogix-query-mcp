@@ -102,8 +102,11 @@ export async function executeQueryLogs(
     // Execute query
     const response = await coralogixClient.queryLogs(coralogixRequest);
 
+    // Handle cases where logs might be undefined or null
+    const logs = response.logs || [];
+
     // Apply pagination to results
-    const paginatedLogs = response.logs.slice(offset, offset + limit);
+    const paginatedLogs = logs.slice(offset, offset + limit);
 
     // Process response for AI consumption
     const processedResponse = ResponseProcessor.processLogs(
