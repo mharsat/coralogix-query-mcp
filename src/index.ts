@@ -9,6 +9,10 @@ import {
 
 import { CoralogixClient } from "./utils/coralogix-client.js";
 import { queryLogsTool, createQueryLogsHandler } from "./tools/query-logs.js";
+import {
+  logsSchemaToolSchema,
+  createLogsSchemaHandler,
+} from "./tools/logs-schema.js";
 import { CORALOGIX_DOMAINS, type CoralogixDomain } from "./config/limits.js";
 import { CoralogixConfig } from "./types/index.js";
 
@@ -36,23 +40,39 @@ class CoralogixMCPServer {
     // List available tools
     this.server.setRequestHandler(ListToolsRequestSchema, async () => {
       return {
-        tools: [queryLogsTool],
+        tools: [
+          queryLogsTool, // Original log querying tool
+          logsSchemaToolSchema, // Schema discovery tool
+        ],
       };
     });
 
     // Handle tool execution
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      if (!this.coralogixClient) {
-        throw new Error(
-          "Coralogix client not initialized. Please set CORALOGIX_API_KEY and CORALOGIX_DOMAIN environment variables."
-        );
-      }
-
       const { name, arguments: args } = request.params;
 
       switch (name) {
         case "query_logs": {
+          if (!this.coralogixClient) {
+            throw new Error(
+              "Coralogix client not initialized. Please set CORALOGIX_API_KEY and CORALOGIX_DOMAIN environment variables."
+            );
+          }
           const handler = createQueryLogsHandler(this.coralogixClient);
+          const result = await handler(args);
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+
+        case "get_logs_schema": {
+          // Schema tool doesn't need Coralogix client - it's informational
+          const handler = createLogsSchemaHandler();
           const result = await handler(args);
           return {
             content: [

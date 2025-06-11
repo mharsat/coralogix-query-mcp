@@ -5,6 +5,7 @@ A Model Context Protocol (MCP) server that provides AI-optimized access to Coral
 ## Features
 
 - **AI-Optimized Responses**: Intelligent log processing and truncation to prevent LLM context overflow
+- **Schema Discovery**: Built-in schema information and field documentation for effective query construction
 - **Automatic Query Detection**: Automatically detects and handles both Lucene and DataPrime query syntax
 - **Smart Pagination**: Efficient pagination support for comprehensive log investigations
 - **Response Processing**: Intelligent truncation of stack traces and large log messages
@@ -110,21 +111,51 @@ await query_logs({
   query: 'source logs | filter level == "ERROR" | limit 20',
   timeframe: "6h",
 });
+```
 
-// Custom time range with pagination
-await query_logs({
-  query: "application:payments AND timeout",
-  timeframe: "custom",
-  startDate: "2024-01-15T10:00:00Z",
-  endDate: "2024-01-15T11:00:00Z",
-  limit: 30,
-  page: 2,
+### `get_logs_schema`
+
+Get comprehensive schema information for Coralogix logs including available fields, search examples, and query syntax tips.
+
+**Parameters:**
+
+- `includeExamples` (optional): Include practical query examples for common use cases (default: true)
+- `includeAdvanced` (optional): Include advanced DataPrime operators and complex examples (default: false)
+
+**Example Usage:**
+
+```javascript
+// Get basic schema with examples
+await get_logs_schema({
+  includeExamples: true,
+  includeAdvanced: false,
+});
+
+// Get comprehensive schema with advanced features
+await get_logs_schema({
+  includeExamples: true,
+  includeAdvanced: true,
 });
 ```
 
+**Response includes:**
+
+- **commonFields**: Available log fields with types, descriptions, and examples
+- **searchExamples**: Practical query examples for common use cases
+- **queryTips**: Syntax tips for both Lucene and DataPrime
+- **fieldAliases**: Alternative field names for convenience
+
+## AI Agent Workflow
+
+The tools work together to provide a comprehensive log analysis experience:
+
+1. **Discovery**: Use `get_logs_schema` to understand available fields and query syntax
+2. **Investigation**: Use `query_logs` to execute queries and analyze results
+3. **Iteration**: Refine queries based on results and use pagination for comprehensive analysis
+
 ## Response Format
 
-The server returns structured, AI-optimized responses:
+### Query Logs Response
 
 ```json
 {
@@ -207,6 +238,8 @@ npm test
 - **`src/config/`**: Configuration and limits
 - **`src/utils/`**: Core utilities (HTTP client, query processing, response processing)
 - **`src/tools/`**: MCP tool implementations
+  - **`query-logs.ts`**: Main log querying functionality
+  - **`logs-schema.ts`**: Schema discovery and documentation
 - **`src/index.ts`**: Main server entry point
 
 ## License

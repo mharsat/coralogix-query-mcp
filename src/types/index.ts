@@ -75,6 +75,31 @@ export interface QueryLogsOutput {
   };
 }
 
+// Schema Types
+export interface LogsSchemaOutput {
+  commonFields: {
+    [fieldName: string]: {
+      type: string;
+      description: string;
+      examples?: string[];
+    };
+  };
+  searchExamples: {
+    [category: string]: {
+      description: string;
+      luceneQuery: string;
+      dataPrimeQuery?: string;
+    };
+  };
+  queryTips: {
+    lucene: string[];
+    dataPrime: string[];
+  };
+  fieldAliases: {
+    [alias: string]: string;
+  };
+}
+
 // Configuration Types
 export interface CoralogixConfig {
   apiKey: string;
