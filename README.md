@@ -23,27 +23,10 @@ Add to your MCP settings:
   "mcpServers": {
     "coralogix": {
       "command": "npx",
-      "args": ["coralogix-query-mcp"],
+      "args": ["-y", "coralogix-query-mcp"],
       "env": {
         "CORALOGIX_API_KEY": "your_api_key",
         "CORALOGIX_DOMAIN": "EU1"
-      }
-    }
-  }
-}
-```
-
-### VS Code with Continue
-
-Configure in your Continue settings:
-
-```json
-{
-  "mcp": {
-    "servers": {
-      "coralogix": {
-        "command": "npx",
-        "args": ["coralogix-query-mcp"]
       }
     }
   }
@@ -55,7 +38,7 @@ Configure in your Continue settings:
 Configure your MCP client to run:
 
 ```bash
-CORALOGIX_API_KEY=your_key CORALOGIX_DOMAIN=EU1 npx coralogix-query-mcp
+CORALOGIX_API_KEY=your_key CORALOGIX_DOMAIN=EU1 npx -y coralogix-query-mcp
 ```
 
 ## Configuration
@@ -71,18 +54,6 @@ The server requires two environment variables:
 2. **CORALOGIX_DOMAIN**: Your Coralogix domain region
    - Options: `US1`, `US2`, `EU1`, `EU2`, `AP1`, `AP2`, `AP3`
    - See: https://coralogix.com/docs/management-api-endpoints/
-
-### Installation
-
-```bash
-npm install -g coralogix-query-mcp
-```
-
-Or run directly with npx (recommended):
-
-```bash
-npx coralogix-query-mcp
-```
 
 ## Available Tools
 
@@ -211,28 +182,6 @@ npm start
 
 # Or run in development mode (auto-rebuilds on changes)
 npm run dev
-```
-
-### Testing the Server
-
-The MCP server communicates via **stdio** (stdin/stdout) using JSON-RPC, not HTTP ports.
-
-**Test available tools:**
-
-```bash
-echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}' | node dist/index.js
-```
-
-**Test schema tool:**
-
-```bash
-echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "get_logs_schema", "arguments": {}}}' | node dist/index.js
-```
-
-**Test query tool (requires valid API key):**
-
-```bash
-echo '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "query_logs", "arguments": {"query": "level:ERROR", "timeframe": "1h"}}}' | node dist/index.js
 ```
 
 ### Architecture
