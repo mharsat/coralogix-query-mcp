@@ -12,52 +12,11 @@ A Model Context Protocol (MCP) server that provides AI-optimized access to Coral
 - **Archive Support**: Automatic archive inclusion for historical data queries
 - **Retry Logic**: Built-in retry mechanisms with exponential backoff
 
-## Installation
-
-```bash
-npm install -g coralogix-query-mcp
-```
-
-Or run directly with npx:
-
-```bash
-npx coralogix-query-mcp
-```
-
-## Configuration
-
-The server requires two environment variables:
-
-1. **CORALOGIX_API_KEY**: Your Coralogix personal API key
-
-   - Get from: https://coralogix.com/docs/user-guides/account-management/api-keys/api-keys/#add-a-custom-api-key
-
-2. **CORALOGIX_DOMAIN**: Your Coralogix domain region
-   - Options: `US1`, `US2`, `EU1`, `EU2`, `AP1`, `AP2`, `AP3`
-   - See: https://coralogix.com/docs/management-api-endpoints/
-
-### Environment Setup
-
-For local development, copy the example environment file:
-
-```bash
-cp .env.example .env
-```
-
-Then edit `.env` with your actual values:
-
-```bash
-CORALOGIX_API_KEY=your_actual_api_key
-CORALOGIX_DOMAIN=EU1
-```
-
-**Note**: The server will automatically load environment variables from `.env` file if present. You can also set environment variables directly in your shell or MCP client configuration.
-
 ## Usage with MCP Clients
 
-### Cursor Integration
+### Cursor / Claude Desktop
 
-Add to your MCP settings in Cursor:
+Add to your MCP settings:
 
 ```json
 {
@@ -74,12 +33,55 @@ Add to your MCP settings in Cursor:
 }
 ```
 
+### VS Code with Continue
+
+Configure in your Continue settings:
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "coralogix": {
+        "command": "npx",
+        "args": ["coralogix-query-mcp"]
+      }
+    }
+  }
+}
+```
+
 ### Other MCP Clients
 
 Configure your MCP client to run:
 
 ```bash
 CORALOGIX_API_KEY=your_key CORALOGIX_DOMAIN=EU1 npx coralogix-query-mcp
+```
+
+## Configuration
+
+### Environment Variables
+
+The server requires two environment variables:
+
+1. **CORALOGIX_API_KEY**: Your Coralogix personal API key
+
+   - Get from: https://coralogix.com/docs/user-guides/account-management/api-keys/api-keys/#add-a-custom-api-key
+
+2. **CORALOGIX_DOMAIN**: Your Coralogix domain region
+   - Options: `US1`, `US2`, `EU1`, `EU2`, `AP1`, `AP2`, `AP3`
+   - See: https://coralogix.com/docs/management-api-endpoints/
+
+### Installation
+
+```bash
+npm install -g coralogix-query-mcp
+```
+
+Or run directly with npx (recommended):
+
+```bash
+npx coralogix-query-mcp
 ```
 
 ## Available Tools
@@ -99,45 +101,23 @@ Query Coralogix logs with AI-optimized responses and pagination support.
 - `limit` (optional): Results per page (1-50, default: 20)
 - `page` (optional): Page number for pagination (default: 1)
 
-**Example Usage:**
+**Example:**
 
 ```javascript
-// Simple error search
 await query_logs({
   query: "level:ERROR",
   timeframe: "1h",
-});
-
-// Complex DataPrime query
-await query_logs({
-  query: 'source logs | filter level == "ERROR" | limit 20',
-  timeframe: "6h",
 });
 ```
 
 ### `get_logs_schema`
 
-Get comprehensive schema information for Coralogix logs including available fields, search examples, and query syntax tips.
+Gets comprehensive schema information for Coralogix logs including available fields, search examples, and query syntax documentation. No parameters needed - returns complete schema and examples.
 
-**Parameters:**
-
-- `includeExamples` (optional): Include practical query examples for common use cases (default: true)
-- `includeAdvanced` (optional): Include advanced DataPrime operators and complex examples (default: false)
-
-**Example Usage:**
+**Example:**
 
 ```javascript
-// Get basic schema with examples
-await get_logs_schema({
-  includeExamples: true,
-  includeAdvanced: false,
-});
-
-// Get comprehensive schema with advanced features
-await get_logs_schema({
-  includeExamples: true,
-  includeAdvanced: true,
-});
+await get_logs_schema();
 ```
 
 **Response includes:**
@@ -201,7 +181,7 @@ The tools work together to provide a comprehensive log analysis experience:
 - **Stack traces**: Limited to 5 lines with key information preserved
 - **Archive queries**: Automatically included for data older than 24 hours
 
-## Development
+## Local Development
 
 ### Prerequisites
 
@@ -220,87 +200,42 @@ cp .env.example .env
 # Edit .env with your actual Coralogix API key and domain
 ```
 
-### Build
+### Running Locally
 
 ```bash
-npm run build
-```
-
-### Development
-
-```bash
-npm run dev
-```
-
-### Testing
-
-```bash
-npm test
-```
-
-## Local Development & Testing
-
-### Running the Server Locally
-
-The MCP server communicates via **stdio** (stdin/stdout) using JSON-RPC, not HTTP ports.
-
-**Method 1: Direct Node.js execution**
-
-```bash
-# Build the project first
+# Build the project
 npm run build
 
 # Run the server
-node dist/index.js
-```
-
-**Method 2: Using npm scripts**
-
-```bash
-# Run the built server
 npm start
 
 # Or run in development mode (auto-rebuilds on changes)
 npm run dev
 ```
 
-**Method 3: Development with file watching**
+### Testing the Server
 
-```bash
-# Automatically rebuild and restart on file changes
-npm run dev
-```
+The MCP server communicates via **stdio** (stdin/stdout) using JSON-RPC, not HTTP ports.
 
-### Testing the Server Locally
-
-Once the server is running, you can test it by sending JSON-RPC messages:
-
-**Test 1: List available tools**
+**Test available tools:**
 
 ```bash
 echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}' | node dist/index.js
 ```
 
-**Test 2: Get schema information**
+**Test schema tool:**
 
 ```bash
-echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "get_logs_schema", "arguments": {"includeExamples": true}}}' | node dist/index.js
+echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "get_logs_schema", "arguments": {}}}' | node dist/index.js
 ```
 
-**Test 3: Query logs (requires valid API key)**
+**Test query tool (requires valid API key):**
 
 ```bash
 echo '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "query_logs", "arguments": {"query": "level:ERROR", "timeframe": "1h"}}}' | node dist/index.js
 ```
 
-### Server Architecture
-
-- **Transport**: stdio (stdin/stdout) - standard for MCP servers
-- **Protocol**: JSON-RPC 2.0
-- **No HTTP ports**: Communicates directly with MCP clients
-- **Process-based**: Each client spawns its own server process
-
-## Architecture
+### Architecture
 
 - **`src/types/`**: TypeScript type definitions
 - **`src/config/`**: Configuration and limits

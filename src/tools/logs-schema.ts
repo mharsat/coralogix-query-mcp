@@ -36,19 +36,7 @@ export const logsSchemaToolSchema: Tool = {
     "Get Coralogix log field schema and query syntax documentation. Essential for understanding available fields and constructing effective queries.",
   inputSchema: {
     type: "object",
-    properties: {
-      includeExamples: {
-        type: "boolean",
-        default: true,
-        description: "Include practical query examples for common scenarios",
-      },
-      includeAdvanced: {
-        type: "boolean",
-        default: false,
-        description:
-          "Include advanced DataPrime operators and complex query patterns",
-      },
-    },
+    properties: {},
     additionalProperties: false,
   },
 };
@@ -56,11 +44,10 @@ export const logsSchemaToolSchema: Tool = {
 /**
  * Execute the get_logs_schema tool
  */
-export async function executeLogsSchema(input: {
-  includeExamples?: boolean;
-  includeAdvanced?: boolean;
-}): Promise<LogsSchemaOutput> {
-  const { includeExamples = true, includeAdvanced = false } = input;
+export async function executeLogsSchema(): Promise<LogsSchemaOutput> {
+  // Always include examples and basic features - simplified API
+  const includeExamples = true;
+  const includeAdvanced = false;
 
   const schema: LogsSchemaOutput = {
     commonFields: {
@@ -247,13 +234,8 @@ export async function executeLogsSchema(input: {
  * Tool handler function that integrates with MCP server
  */
 export function createLogsSchemaHandler() {
-  return async (input: unknown): Promise<LogsSchemaOutput> => {
-    // Validate input structure
-    const schemaInput = (input || {}) as {
-      includeExamples?: boolean;
-      includeAdvanced?: boolean;
-    };
-
-    return executeLogsSchema(schemaInput);
+  return async (): Promise<LogsSchemaOutput> => {
+    // No input needed since we simplified the API
+    return executeLogsSchema();
   };
 }

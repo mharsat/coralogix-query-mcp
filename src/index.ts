@@ -77,7 +77,7 @@ class CoralogixMCPServer {
         case "get_logs_schema": {
           // Schema tool doesn't need Coralogix client - it's informational
           const handler = createLogsSchemaHandler();
-          const result = await handler(args);
+          const result = await handler();
           return {
             content: [
               {
