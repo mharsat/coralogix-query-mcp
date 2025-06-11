@@ -30,7 +30,7 @@ The server requires two environment variables:
 
 1. **CORALOGIX_API_KEY**: Your Coralogix personal API key
 
-   - Get from: https://coralogix.com/docs/personal-data-key/
+   - Get from: https://coralogix.com/docs/user-guides/account-management/api-keys/api-keys/#add-a-custom-api-key
 
 2. **CORALOGIX_DOMAIN**: Your Coralogix domain region
    - Options: `US1`, `US2`, `EU1`, `EU2`, `AP1`, `AP2`, `AP3`

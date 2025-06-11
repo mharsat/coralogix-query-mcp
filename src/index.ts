@@ -101,7 +101,7 @@ class CoralogixMCPServer {
     if (!apiKey) {
       throw new Error(
         "CORALOGIX_API_KEY environment variable is required. " +
-          "Get your API key from: https://coralogix.com/docs/personal-data-key/"
+          "Get your API key from: https://coralogix.com/docs/user-guides/account-management/api-keys/api-keys/#add-a-custom-api-key"
       );
     }
 
