@@ -14,50 +14,47 @@ import { ResponseProcessor } from "../utils/response-processor.js";
 export const queryLogsTool: Tool = {
   name: "query_logs",
   description:
-    "Search and retrieve Coralogix logs with AI-optimized formatting. Automatically detects query syntax (Lucene vs DataPrime) and returns structured, paginated results. Use this tool to investigate errors, trace issues, monitor applications, and analyze log patterns.",
+    "Query Coralogix logs using Lucene or DataPrime syntax. Returns structured, paginated results with AI-optimized formatting.",
   inputSchema: {
     type: "object",
     properties: {
       query: {
         type: "string",
         description:
-          'Log search query. Supports both Lucene and DataPrime syntax.\n\nLucene examples:\n- "level:ERROR" (find error logs)\n- "exception timeout" (text search)\n- "application:payments AND status:500" (field combination)\n- "text:\\"connection failed\\"" (phrase search)\n\nDataPrime examples:\n- "source logs | filter level == \\"ERROR\\"" (structured query)\n- "source logs | filter timestamp >= now() - 1h | stats count() by application" (aggregation)',
+          'Log search query. Examples: "level:ERROR", "exception timeout", "application:payments AND status:500", "source logs | filter level == \'ERROR\'"',
       },
       timeframe: {
         type: "string",
         enum: ["15m", "1h", "6h", "24h", "custom"],
         default: "1h",
         description:
-          'Time window for log search. Choose preset durations for common investigations:\n- "15m": Recent issues (last 15 minutes)\n- "1h": Standard troubleshooting (last hour) [DEFAULT]\n- "6h": Extended investigation (last 6 hours)\n- "24h": Daily analysis (last 24 hours)\n- "custom": Specific time range (requires startDate and endDate)',
+          "Time window to search. Use 'custom' with startDate/endDate for specific ranges.",
       },
       startDate: {
         type: "string",
         description:
-          'Start timestamp for custom time range in ISO 8601 format. Required when timeframe="custom".\nExample: "2024-01-15T10:00:00Z" (UTC timezone recommended)',
+          "Start date in ISO format (required if timeframe is 'custom'). Example: '2024-01-15T10:00:00Z'",
       },
       endDate: {
         type: "string",
         description:
-          'End timestamp for custom time range in ISO 8601 format. Required when timeframe="custom".\nExample: "2024-01-15T11:00:00Z" (UTC timezone recommended)',
+          "End date in ISO format (required if timeframe is 'custom'). Example: '2024-01-15T11:00:00Z'",
       },
       limit: {
         type: "integer",
-        default: 20,
         minimum: 1,
         maximum: 50,
-        description:
-          "Maximum number of log entries to return per page. Optimized for AI processing:\n- Use 5-10 for focused analysis\n- Use 20 (default) for standard investigation\n- Use 50 for comprehensive data gathering",
+        default: 20,
+        description: "Number of results to return (1-50)",
       },
       page: {
         type: "integer",
-        default: 1,
         minimum: 1,
-        description:
-          "Page number for pagination (1-based). Use sequential pagination to investigate large result sets:\n- Start with page 1 for initial results\n- Increment to explore more logs\n- Check 'hasNextPage' in response to continue",
+        default: 1,
+        description: "Page number for pagination",
       },
     },
     required: ["query"],
-    additionalProperties: false,
   },
 };
 
