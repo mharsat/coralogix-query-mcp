@@ -33,14 +33,91 @@ export class CoralogixClient {
     try {
       const response = await this.makeRequestWithRetry(url, requestOptions);
 
+      // Get response text first to handle both JSON and non-JSON responses
+      const responseText = await response.text();
+
       if (!response.ok) {
+        // Log response details for debugging
+        console.warn(`🔧 Coralogix API Response (${response.status}):`, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          contentLength: responseText.length,
+          contentPreview:
+            responseText.substring(0, 200) +
+            (responseText.length > 200 ? "..." : ""),
+        });
+
         throw new Error(
-          `Coralogix API error: ${response.status} ${response.statusText}`
+          `Coralogix API error: ${response.status} ${
+            response.statusText
+          }. Response: ${responseText.substring(0, 500)}`
         );
       }
 
-      const data = (await response.json()) as CoralogixQueryResponse;
-      return data;
+      // Try to parse as NDJSON (line-delimited JSON) - Coralogix streaming format
+      try {
+        // Split response into lines and parse each JSON object
+        const lines = responseText
+          .trim()
+          .split("\n")
+          .filter((line) => line.trim());
+        const parsedObjects = lines.map((line) => JSON.parse(line));
+
+        // Find the result object (usually the second line)
+        const resultObject =
+          parsedObjects.find((obj) => obj.result) ||
+          parsedObjects.find((obj) => obj.logs);
+
+        if (resultObject) {
+          // Handle different response formats
+          if (resultObject.result) {
+            // New format: {"result": {"results": [...]}}
+            const logs = resultObject.result.results || [];
+            return {
+              logs: logs,
+              total: logs.length,
+              hasMore: false,
+              queryId: parsedObjects[0]?.queryId?.queryId || "unknown",
+            } as CoralogixQueryResponse;
+          } else if (resultObject.logs) {
+            // Old format: {"logs": [...]}
+            return resultObject as CoralogixQueryResponse;
+          }
+        }
+
+        // If no result found, return empty response
+        console.warn(`🔧 No result object found in NDJSON response:`, {
+          lineCount: lines.length,
+          parsedObjects: parsedObjects.map((obj) => Object.keys(obj)),
+        });
+
+        return {
+          logs: [],
+          total: 0,
+          hasMore: false,
+          queryId: parsedObjects[0]?.queryId?.queryId || "unknown",
+        } as CoralogixQueryResponse;
+      } catch (parseError) {
+        console.warn(`🔧 NDJSON Parse Error:`, {
+          parseError:
+            parseError instanceof Error
+              ? parseError.message
+              : "Unknown parse error",
+          responseLength: responseText.length,
+          responsePreview: responseText.substring(0, 500),
+          contentType: response.headers.get("content-type"),
+          lines: responseText.trim().split("\n").length,
+        });
+
+        throw new Error(
+          `Failed to parse Coralogix NDJSON response. Content-Type: ${response.headers.get(
+            "content-type"
+          )}, Lines: ${responseText.trim().split("\n").length}, Error: ${
+            parseError instanceof Error ? parseError.message : "Unknown"
+          }`
+        );
+      }
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Failed to query Coralogix: ${error.message}`);
