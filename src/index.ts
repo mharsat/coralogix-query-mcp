@@ -146,7 +146,11 @@ class CoralogixMCPServer {
       const transport = new StdioServerTransport();
       await this.server.connect(transport);
 
-      console.error("Coralogix Query MCP Server running on stdio");
+      console.error("🚀 Coralogix Query MCP Server running on stdio");
+      console.error("📡 Ready to receive JSON-RPC requests via stdin/stdout");
+      console.error(
+        "🔧 For local testing, send JSON-RPC messages to this process"
+      );
     } catch (error) {
       console.error("Failed to start server:", error);
       process.exit(1);

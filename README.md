@@ -238,6 +238,68 @@ npm run dev
 npm test
 ```
 
+## Local Development & Testing
+
+### Running the Server Locally
+
+The MCP server communicates via **stdio** (stdin/stdout) using JSON-RPC, not HTTP ports.
+
+**Method 1: Direct Node.js execution**
+
+```bash
+# Build the project first
+npm run build
+
+# Run the server
+node dist/index.js
+```
+
+**Method 2: Using npm scripts**
+
+```bash
+# Run the built server
+npm start
+
+# Or run in development mode (auto-rebuilds on changes)
+npm run dev
+```
+
+**Method 3: Development with file watching**
+
+```bash
+# Automatically rebuild and restart on file changes
+npm run dev
+```
+
+### Testing the Server Locally
+
+Once the server is running, you can test it by sending JSON-RPC messages:
+
+**Test 1: List available tools**
+
+```bash
+echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}' | node dist/index.js
+```
+
+**Test 2: Get schema information**
+
+```bash
+echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "get_logs_schema", "arguments": {"includeExamples": true}}}' | node dist/index.js
+```
+
+**Test 3: Query logs (requires valid API key)**
+
+```bash
+echo '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "query_logs", "arguments": {"query": "level:ERROR", "timeframe": "1h"}}}' | node dist/index.js
+```
+
+### Server Architecture
+
+- **Transport**: stdio (stdin/stdout) - standard for MCP servers
+- **Protocol**: JSON-RPC 2.0
+- **No HTTP ports**: Communicates directly with MCP clients
+- **Process-based**: Each client spawns its own server process
+
 ## Architecture
 
 - **`src/types/`**: TypeScript type definitions
