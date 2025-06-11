@@ -19,7 +19,6 @@ import {
 } from "./tools/logs-schema.js";
 import { CORALOGIX_DOMAINS, type CoralogixDomain } from "./config/limits.js";
 import { CoralogixConfig } from "./types/index.js";
-import { Logger } from "./utils/logger.js";
 
 class CoralogixMCPServer {
   private server: Server;
@@ -132,14 +131,15 @@ class CoralogixMCPServer {
 
       // Test connection
       if (this.coralogixClient) {
-        Logger.info("Testing Coralogix connection...");
+        // Note: Using console.warn/error because stdout is reserved for JSON-RPC in MCP
+        console.warn("Testing Coralogix connection...");
         const connectionOk = await this.coralogixClient.testConnection();
         if (!connectionOk) {
-          Logger.warn(
+          console.warn(
             "Failed to connect to Coralogix API. Please verify your API key and domain."
           );
         } else {
-          Logger.success("Coralogix connection successful");
+          console.warn("✓ Coralogix connection successful");
         }
       }
 
@@ -147,13 +147,14 @@ class CoralogixMCPServer {
       const transport = new StdioServerTransport();
       await this.server.connect(transport);
 
-      Logger.simple("🚀 Coralogix Query MCP Server running on stdio");
-      Logger.simple("📡 Ready to receive JSON-RPC requests via stdin/stdout");
-      Logger.simple(
+      // Note: Using console.warn for visibility while keeping stdout clean for JSON-RPC
+      console.warn("🚀 Coralogix Query MCP Server running on stdio");
+      console.warn("📡 Ready to receive JSON-RPC requests via stdin/stdout");
+      console.warn(
         "🔧 For local testing, send JSON-RPC messages to this process"
       );
     } catch (error) {
-      Logger.error(`Failed to start server: ${error}`);
+      console.error(`Failed to start server: ${error}`);
       process.exit(1);
     }
   }
@@ -161,18 +162,18 @@ class CoralogixMCPServer {
 
 // Handle process signals gracefully
 process.on("SIGINT", () => {
-  Logger.info("Received SIGINT, shutting down gracefully...");
+  console.warn("Received SIGINT, shutting down gracefully...");
   process.exit(0);
 });
 
 process.on("SIGTERM", () => {
-  Logger.info("Received SIGTERM, shutting down gracefully...");
+  console.warn("Received SIGTERM, shutting down gracefully...");
   process.exit(0);
 });
 
 // Start server
 const server = new CoralogixMCPServer();
 server.start().catch((error) => {
-  Logger.error(`Server startup failed: ${error}`);
+  console.error(`Server startup failed: ${error}`);
   process.exit(1);
 });
